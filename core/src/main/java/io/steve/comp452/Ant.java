@@ -21,7 +21,6 @@ public class Ant {
     private StaticStateMachine staticStateMachine;
     Rectangle boundingRec;
     Rectangle nestBoundingRec;
-    int [][] costGraph;
 
     public State state;
     public enum State{
@@ -31,14 +30,11 @@ public class Ant {
     Node randomToSearch;
     ArrayList<Node> food;
     ArrayList<Node> water;
-    ArrayList<Node> poison;
 
-    Ant(ArrayList<Node> food, ArrayList<Node> water,
-        ArrayList<Node> poison, int [][] costGraph){
+    Ant(ArrayList<Node> food, ArrayList<Node> water){
 
         ant = new Sprite(new Texture("ant.png"));
         x = y = 1f;
-        this.costGraph = costGraph;
         // initial state is searching for food
         state = State.searchForFood;
         staticStateMachine = new StaticStateMachine(this);
@@ -46,7 +42,6 @@ public class Ant {
         randomToSearch = new Node(rand.nextInt(16 - 1) + 1, rand.nextInt(16 - 1) + 1);
         this.food = food;
         this.water = water;
-        this.poison = poison;
         boundingRec = new Rectangle(x, y, 15, 15);
         nestBoundingRec = new Rectangle(0,0, 30, 30);
     }
@@ -75,7 +70,7 @@ public class Ant {
     }
 
     public Vector2 separate(ArrayList<Ant> colony){
-        float desiredSpearation = (ant.getWidth() + ant.getHeight());
+        float desiredSpearation = (ant.getWidth() - 20 + ant.getHeight() - 20);
         Vector2 sum = new Vector2();
         int count = 0;
 

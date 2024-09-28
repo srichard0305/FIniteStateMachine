@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
         initMap();
 
         for(int i = 0; i < numOfAnts; i++){
-            antColony.add(new Ant(food,water, poison, costGraph));
+            antColony.add(new Ant(food,water));
         }
     }
 
@@ -154,6 +154,31 @@ public class GameScreen implements Screen {
             ant.update(antColony, batch);
         }
         batch.end();
+        addAnt();
+        removeAnt();
+    }
+
+    public void addAnt(){
+        ArrayList<Ant> tempList = new ArrayList<>();
+        for(Ant ant : antColony){
+            if(ant.boundingRec.overlaps(ant.nestBoundingRec) && ant.state == Ant.State.returnToNest)
+                tempList.add(new Ant(food, water));
+        }
+        if(!tempList.isEmpty())
+            antColony.add(tempList.get(0));
+
+    }
+
+    public void removeAnt(){
+        ArrayList<Ant> tempList = new ArrayList<>();
+        for(Ant ant : antColony){
+           for(Node node : poison){
+               if(ant.boundingRec.overlaps(node.boundingRec))
+                   tempList.add(ant);
+           }
+        }
+        antColony.removeAll(tempList);
+        tempList.clear();
     }
 
     @Override
