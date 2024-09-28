@@ -11,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -37,13 +36,13 @@ public class GameScreen implements Screen {
     final int COL = 16;
 
     Node nest;
-    Rectangle nestBoundingRec;
-    int [][] costGraph;
     int numOfAnts;
     ArrayList<Ant> antColony;
     ArrayList<Node> food;
     ArrayList<Node> water;
     ArrayList<Node> poison;
+
+    EndGame endGame;
 
     GameScreen(Game game, int numOfAnts){
         this.game = game;
@@ -52,8 +51,6 @@ public class GameScreen implements Screen {
         viewport = new FillViewport(camera.viewportWidth, camera.viewportHeight);
         stage = new Stage(viewport);
         batch = new SpriteBatch();
-
-        costGraph = new int[ROW][COL];
 
         this.numOfAnts = numOfAnts;
 
@@ -67,6 +64,8 @@ public class GameScreen implements Screen {
         for(int i = 0; i < numOfAnts; i++){
             antColony.add(new Ant(food,water));
         }
+
+        endGame = new EndGame(game);
     }
 
     public void initMap(){
@@ -89,7 +88,6 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = 4;
                     water.add(new Node(i,j));
                 }
                 // add food to map
@@ -100,7 +98,6 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = 2;
                     food.add(new Node(i,j));
                 }
                 // add poison to map
@@ -111,7 +108,6 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = Integer.MAX_VALUE;
                     poison.add(new Node(i,j));
                 }
                 else{
@@ -121,7 +117,6 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = 1;
                 }
 
             }
@@ -135,8 +130,6 @@ public class GameScreen implements Screen {
         TiledMapTileLayer.Cell nestCell = new TiledMapTileLayer.Cell();
         nestCell.setTile(nestTile);
         tiledMapTileLayerTerrain.setCell(0, 0, nestCell);
-        costGraph[0][0] = 0;
-
 
         renderer = new OrthogonalTiledMapRenderer(map);
     }
@@ -156,6 +149,7 @@ public class GameScreen implements Screen {
         batch.end();
         addAnt();
         removeAnt();
+        checkEnd();
     }
 
     public void addAnt(){
@@ -179,6 +173,13 @@ public class GameScreen implements Screen {
         }
         antColony.removeAll(tempList);
         tempList.clear();
+    }
+
+    public void checkEnd(){
+        if(antColony.isEmpty()){
+            game.setScreen(endGame);
+            dispose();
+        }
     }
 
     @Override

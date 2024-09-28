@@ -26,6 +26,7 @@ public class Ant {
     public enum State{
         searchForFood, returnToNest, searchForWater;
     }
+
     Random rand;
     Node randomToSearch;
     ArrayList<Node> food;
@@ -134,6 +135,7 @@ public class Ant {
         }
         else if(state == State.searchForWater){
 
+            //if ant has reached random node - re roll
             if(boundingRec.overlaps(randomToSearch.boundingRec)){
                 randomToSearch.setX(rand.nextInt(16 ));
                 randomToSearch.setY(rand.nextInt(16));

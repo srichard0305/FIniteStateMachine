@@ -20,7 +20,6 @@ public class StaticStateMachine {
                 // if ant is on food change state to return to nest
                 if(ant.boundingRec.overlaps(food.boundingRec)){
                     ant.state = Ant.State.returnToNest;
-                    Gdx.app.log("", "Found food returning to nest");
                 }
             }
         }
@@ -28,7 +27,6 @@ public class StaticStateMachine {
         else if(ant.state == Ant.State.returnToNest){
             if(ant.boundingRec.overlaps(ant.nestBoundingRec)) {
                 ant.state = Ant.State.searchForWater;
-                Gdx.app.log("", "returned to nest seaching for water");
             }
 
         }
@@ -37,7 +35,6 @@ public class StaticStateMachine {
             for(Node water : ant.water){
                 if(ant.boundingRec.overlaps(water.boundingRec)){
                     ant.state = Ant.State.searchForFood;
-                    Gdx.app.log("", "found water seraching for food");
                 }
             }
         }
