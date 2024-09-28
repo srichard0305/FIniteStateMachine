@@ -39,6 +39,9 @@ public class GameScreen implements Screen {
     int [][] costGraph;
     int numOfAnts;
     ArrayList<Ant> antColony;
+    ArrayList<Node> food;
+    ArrayList<Node> water;
+    ArrayList<Node> poison;
 
     GameScreen(Game game, int numOfAnts){
         this.game = game;
@@ -53,11 +56,15 @@ public class GameScreen implements Screen {
         this.numOfAnts = numOfAnts;
 
         antColony = new ArrayList<>();
-        for(int i = 0; i < numOfAnts; i++){
-            antColony.add(new Ant(costGraph));
-        }
+        food = new ArrayList<>();
+        water = new ArrayList<>();
+        poison = new ArrayList<>();
 
         initMap();
+
+        for(int i = 0; i < numOfAnts; i++){
+            antColony.add(new Ant(food,water, poison, costGraph));
+        }
     }
 
     public void initMap(){
@@ -72,6 +79,7 @@ public class GameScreen implements Screen {
 
                 int num = rand.nextInt(100 + 1);
 
+                // add water to map
                 if(num < 5 && num > 0){
                     Texture landTexture = new Texture(Gdx.files.internal("water.png"));
                     TextureRegion landTextureReg = new TextureRegion(landTexture);
@@ -80,7 +88,9 @@ public class GameScreen implements Screen {
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
                     costGraph[i][j] = 4;
+                    water.add(new Node(i,j));
                 }
+                // add food to map
                 else if(num < 10 && num > 5){
                     Texture landTexture = new Texture(Gdx.files.internal("apple.png"));
                     TextureRegion landTextureReg = new TextureRegion(landTexture);
@@ -89,7 +99,9 @@ public class GameScreen implements Screen {
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
                     costGraph[i][j] = 2;
+                    food.add(new Node(i,j));
                 }
+                // add poison to map
                 else if(num < 25 && num > 10){
                     Texture landTexture = new Texture(Gdx.files.internal("swamp.png"));
                     TextureRegion landTextureReg = new TextureRegion(landTexture);
@@ -98,6 +110,7 @@ public class GameScreen implements Screen {
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
                     costGraph[i][j] = Integer.MAX_VALUE;
+                    poison.add(new Node(i,j));
                 }
                 else{
                     Texture landTexture = new Texture(Gdx.files.internal("grass.png"));

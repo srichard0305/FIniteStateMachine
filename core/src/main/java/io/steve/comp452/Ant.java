@@ -8,39 +8,38 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Ant {
 
     private Sprite ant;
-    private float x, y;
+    public float x, y;
     private float maxSpeed = 1.5f;
     private ArrayList<Node> path;
     private Vector2 result;
     private float angle;
     private StaticStateMachine staticStateMachine;
-    int [][] costGraph; 
-
-    public enum state{
+    int [][] costGraph;
+    public State state;
+    public enum State{
         searchForFood, returnToNest, searchForWater;
     }
+    ArrayList<Node> food;
+    ArrayList<Node> water;
+    ArrayList<Node> poison;
 
+    Ant(ArrayList<Node> food, ArrayList<Node> water,
+        ArrayList<Node> poison, int [][] costGraph){
 
-    Ant(int [][] costGraph){
         ant = new Sprite(new Texture("ant.png"));
         x = y = 0f;
         this.costGraph = costGraph;
-    }
-
-    public void draw(Batch batch){
-        if(path.size() > 1) {
-            Node targetNode = followPath();
-            Vector2 seekResult = seek(convertCoordinates(targetNode.getX()), convertCoordinates(targetNode.getY()));
-            x += seekResult.x;
-            y += seekResult.y;
-            ant.setPosition(x, y);
-            ant.setRotation(align(convertCoordinates(targetNode.getX()), convertCoordinates(targetNode.getY())) - 90);
-        }
-        ant.draw(batch);
+        // initial state is searching for food
+        state = State.searchForFood;
+        staticStateMachine = new StaticStateMachine(this);
+        this.food = food;
+        this.water = water;
+        this.poison = poison;
     }
 
     private Node followPath(){
@@ -112,7 +111,20 @@ public class Ant {
 
 
     public void update(ArrayList<Ant> antColony, Batch batch) {
+        Random rand = new Random();
+        staticStateMachine.update();
+        if(state == State.searchForFood){
+            x = rand.nextInt(16 + 1);
+            y = rand.nextInt(16 + 1);
 
+
+        }
+        else if(state == State.returnToNest){
+
+        }
+        else if(state == State.searchForWater){
+
+        }
 
     }
 }
