@@ -13,22 +13,22 @@ public class Ant {
 
     private Sprite ant;
     private float x, y;
-    private float maxSpeed = 2.0f;
+    private float maxSpeed = 1.5f;
     private ArrayList<Node> path;
     private Vector2 result;
     private float angle;
+    private StaticStateMachine staticStateMachine;
+    int [][] costGraph; 
+
+    public enum state{
+        searchForFood, returnToNest, searchForWater;
+    }
 
 
-    Ant(ArrayList<Node> path){
+    Ant(int [][] costGraph){
         ant = new Sprite(new Texture("ant.png"));
-        this.path = new ArrayList<>(path);
-        x = convertCoordinates(path.get(0).getX());
-        y = convertCoordinates(path.get(0).getY());
-        //angle = align(x, y);
-        ant.setPosition(x, y);
-        ant.setRotation(angle);
-        Gdx.app.log("", String.valueOf(x) + " " + String.valueOf(y));
-
+        x = y = 0f;
+        this.costGraph = costGraph;
     }
 
     public void draw(Batch batch){
@@ -81,6 +81,39 @@ public class Ant {
         return angle;
     }
 
+    public Vector2 separate(ArrayList<Ant> colony){
+        float desiredSpearation = (ant.getWidth() + ant.getHeight());
+        Vector2 sum = new Vector2();
+        int count = 0;
 
+        for(Ant ant : colony){
+            float d = Vector2.dst(this.ant.getX(), this.ant.getY(), ant.x, ant.y);
+
+            if(d > 0 && d < desiredSpearation){
+                Vector2 diff = new Vector2(this.ant.getX() - ant.x, this.ant.getY() -  ant.y);
+                diff.nor();
+                diff.set(diff.x/d, diff.y/d);
+                sum.add(diff);
+                count++;
+            }
+        }
+
+        if(count > 0){
+
+            sum.set(sum.x/(float) count, sum.y/(float) count);
+            sum.nor();
+            sum.set(sum.x*maxSpeed, sum.y*maxSpeed);
+            return sum;
+        }
+        else
+            return new Vector2(0,0);
+
+    }
+
+
+    public void update(ArrayList<Ant> antColony, Batch batch) {
+
+
+    }
 }
 

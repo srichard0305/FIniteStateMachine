@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen implements Screen {
@@ -26,6 +28,7 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     Stage stage;
     Viewport viewport;
+    SpriteBatch batch;
 
     final int TILE_WIDTH = 50;
     final int TILE_HEIGHT = 50;
@@ -35,7 +38,7 @@ public class GameScreen implements Screen {
     Node nest;
     int [][] costGraph;
     int numOfAnts;
-
+    ArrayList<Ant> antColony;
 
     GameScreen(Game game, int numOfAnts){
         this.game = game;
@@ -43,13 +46,18 @@ public class GameScreen implements Screen {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
         viewport = new FillViewport(camera.viewportWidth, camera.viewportHeight);
         stage = new Stage(viewport);
+        batch = new SpriteBatch();
 
         costGraph = new int[ROW][COL];
 
         this.numOfAnts = numOfAnts;
 
-        initMap();
+        antColony = new ArrayList<>();
+        for(int i = 0; i < numOfAnts; i++){
+            antColony.add(new Ant(costGraph));
+        }
 
+        initMap();
     }
 
     public void initMap(){
@@ -125,6 +133,11 @@ public class GameScreen implements Screen {
         camera.update();
         renderer.setView(camera);
         renderer.render();
+        batch.begin();
+        for(Ant ant : antColony){
+            ant.update(antColony, batch);
+        }
+        batch.end();
     }
 
     @Override
