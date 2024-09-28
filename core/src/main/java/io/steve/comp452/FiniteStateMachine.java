@@ -5,7 +5,7 @@ import com.badlogic.gdx.Game;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class FiniteStateMachine extends Game {
 
-    GameScreen gameScreen;
+    StartScreen startScreen;
 
     public FiniteStateMachine() {
         super();
@@ -13,14 +13,14 @@ public class FiniteStateMachine extends Game {
 
     @Override
     public void create() {
-        gameScreen = new GameScreen(this);
-        setScreen(gameScreen);
+        startScreen = new StartScreen(this);
+        setScreen(startScreen);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        gameScreen.dispose();
+        startScreen.dispose();
     }
 
     @Override
@@ -40,6 +40,6 @@ public class FiniteStateMachine extends Game {
 
     @Override
     public void resize(int width, int height) {
-        gameScreen.resize(width, height);
+        startScreen.resize(width, height);
     }
 }

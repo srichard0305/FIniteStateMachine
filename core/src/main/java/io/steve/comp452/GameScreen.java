@@ -34,9 +34,10 @@ public class GameScreen implements Screen {
 
     Node nest;
     int [][] costGraph;
+    int numOfAnts;
 
 
-    GameScreen(Game game){
+    GameScreen(Game game, int numOfAnts){
         this.game = game;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
@@ -44,6 +45,8 @@ public class GameScreen implements Screen {
         stage = new Stage(viewport);
 
         costGraph = new int[ROW][COL];
+
+        this.numOfAnts = numOfAnts;
 
         initMap();
 
@@ -68,7 +71,7 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = 2;
+                    costGraph[i][j] = 4;
                 }
                 else if(num < 10 && num > 5){
                     Texture landTexture = new Texture(Gdx.files.internal("apple.png"));
@@ -77,7 +80,7 @@ public class GameScreen implements Screen {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(myTile);
                     tiledMapTileLayerTerrain.setCell(i, j, cell);
-                    costGraph[i][j] = -1;
+                    costGraph[i][j] = 2;
                 }
                 else if(num < 25 && num > 10){
                     Texture landTexture = new Texture(Gdx.files.internal("swamp.png"));
