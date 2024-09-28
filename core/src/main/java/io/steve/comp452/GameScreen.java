@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -36,6 +37,7 @@ public class GameScreen implements Screen {
     final int COL = 16;
 
     Node nest;
+    Rectangle nestBoundingRec;
     int [][] costGraph;
     int numOfAnts;
     ArrayList<Ant> antColony;
@@ -102,7 +104,7 @@ public class GameScreen implements Screen {
                     food.add(new Node(i,j));
                 }
                 // add poison to map
-                else if(num < 25 && num > 10){
+                else if(num < 15 && num > 10){
                     Texture landTexture = new Texture(Gdx.files.internal("swamp.png"));
                     TextureRegion landTextureReg = new TextureRegion(landTexture);
                     StaticTiledMapTile myTile = new StaticTiledMapTile(landTextureReg);
@@ -134,6 +136,7 @@ public class GameScreen implements Screen {
         nestCell.setTile(nestTile);
         tiledMapTileLayerTerrain.setCell(0, 0, nestCell);
         costGraph[0][0] = 0;
+
 
         renderer = new OrthogonalTiledMapRenderer(map);
     }

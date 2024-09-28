@@ -1,10 +1,10 @@
 package io.steve.comp452;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -19,11 +19,16 @@ public class Ant {
     private Vector2 result;
     private float angle;
     private StaticStateMachine staticStateMachine;
+    Rectangle boundingRec;
+    Rectangle nestBoundingRec;
     int [][] costGraph;
+
     public State state;
     public enum State{
         searchForFood, returnToNest, searchForWater;
     }
+    Random rand;
+    Node randomToSearch;
     ArrayList<Node> food;
     ArrayList<Node> water;
     ArrayList<Node> poison;
@@ -32,29 +37,18 @@ public class Ant {
         ArrayList<Node> poison, int [][] costGraph){
 
         ant = new Sprite(new Texture("ant.png"));
-        x = y = 0f;
+        x = y = 1f;
         this.costGraph = costGraph;
         // initial state is searching for food
         state = State.searchForFood;
         staticStateMachine = new StaticStateMachine(this);
+        rand = new Random();
+        randomToSearch = new Node(rand.nextInt(16 - 1) + 1, rand.nextInt(16 - 1) + 1);
         this.food = food;
         this.water = water;
         this.poison = poison;
-    }
-
-    private Node followPath(){
-        if(x/50 == path.get(0).getX() && y/50 == path.get(0).getY()){
-            Node temp = path.get(1);
-            path.remove(0);
-            path.trimToSize();
-            return temp;
-        }
-
-        return path.get(0);
-    }
-
-    private float convertCoordinates(float coordinate){
-        return coordinate * 50;
+        boundingRec = new Rectangle(x, y, 15, 15);
+        nestBoundingRec = new Rectangle(0,0, 30, 30);
     }
 
     private Vector2 seek(float goalX, float goalY){
@@ -111,19 +105,55 @@ public class Ant {
 
 
     public void update(ArrayList<Ant> antColony, Batch batch) {
-        Random rand = new Random();
+
         staticStateMachine.update();
         if(state == State.searchForFood){
-            x = rand.nextInt(16 + 1);
-            y = rand.nextInt(16 + 1);
+            //if ant has reached random node - re roll
+            if(boundingRec.overlaps(randomToSearch.boundingRec)){
+                randomToSearch.setX(rand.nextInt(16 ));
+                randomToSearch.setY(rand.nextInt(16));
+                randomToSearch.boundingRec.setPosition((randomToSearch.getX()*50)  + 10,(randomToSearch.getY()*50) + 10);
+            }
 
-
+            Vector2 seekResult = seek(randomToSearch.getX()*50, randomToSearch.getY()*50);
+            float angle = align(randomToSearch.getX()*50, randomToSearch.getY()*50);
+            Vector2 separateResult = separate(antColony);
+            x += seekResult.x + separateResult.x;
+            y += seekResult.y + separateResult.y;
+            ant.setPosition(x, y);
+            ant.setRotation(angle - 90);
+            boundingRec.setPosition(x,y);
+            ant.draw(batch);
         }
         else if(state == State.returnToNest){
+            Vector2 seekResult = seek(0, 0);
+            float angle = align(0, 0);
+            Vector2 separateResult = separate(antColony);
+            x += seekResult.x + separateResult.x;
+            y += seekResult.y + separateResult.y;
+            ant.setPosition(x, y);
+            ant.setRotation(angle - 90);
+            boundingRec.setPosition(x,y);
+            ant.draw(batch);
 
         }
         else if(state == State.searchForWater){
 
+            if(boundingRec.overlaps(randomToSearch.boundingRec)){
+                randomToSearch.setX(rand.nextInt(16 ));
+                randomToSearch.setY(rand.nextInt(16));
+                randomToSearch.boundingRec.setPosition((randomToSearch.getX()*50)  + 10,(randomToSearch.getY()*50) + 10);
+            }
+
+            Vector2 seekResult = seek(randomToSearch.getX()*50, randomToSearch.getY()*50);
+            float angle = align(randomToSearch.getX()*50, randomToSearch.getY()*50);
+            Vector2 separateResult = separate(antColony);
+            x += seekResult.x + separateResult.x;
+            y += seekResult.y + separateResult.y;
+            ant.setPosition(x, y);
+            ant.setRotation(angle - 90);
+            boundingRec.setPosition(x,y);
+            ant.draw(batch);
         }
 
     }

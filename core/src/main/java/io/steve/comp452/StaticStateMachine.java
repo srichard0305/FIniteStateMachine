@@ -1,5 +1,7 @@
 package io.steve.comp452;
 
+import com.badlogic.gdx.Gdx;
+
 public class StaticStateMachine {
 
     Ant ant;
@@ -16,23 +18,26 @@ public class StaticStateMachine {
             // go through each food placed on the map
             for(Node food : ant.food){
                 // if ant is on food change state to return to nest
-                if(ant.x/50 == food.getX() && ant.y/50 == food.getY()){
+                if(ant.boundingRec.overlaps(food.boundingRec)){
                     ant.state = Ant.State.returnToNest;
-                    return;
+                    Gdx.app.log("", "Found food returning to nest");
                 }
             }
         }
         // if return to nest state is back on the nest search for water
         else if(ant.state == Ant.State.returnToNest){
-            if(ant.x == 0 && ant.y == 0)
+            if(ant.boundingRec.overlaps(ant.nestBoundingRec)) {
                 ant.state = Ant.State.searchForWater;
+                Gdx.app.log("", "returned to nest seaching for water");
+            }
+
         }
         // if searching for water test each node with water
         else if(ant.state == Ant.State.searchForWater){
             for(Node water : ant.water){
-                if(ant.x/50 == water.getX() && ant.y/50 == water.getY()){
+                if(ant.boundingRec.overlaps(water.boundingRec)){
                     ant.state = Ant.State.searchForFood;
-                    return;
+                    Gdx.app.log("", "found water seraching for food");
                 }
             }
         }

@@ -1,5 +1,7 @@
 package io.steve.comp452;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class Node {
 
     private int x, y;
@@ -7,6 +9,7 @@ public class Node {
     private float heuristic;
     private float costSoFar;
     private float estimatedCost;
+    Rectangle boundingRec;
 
     Node(int x, int y){
         this.x = x;
@@ -15,6 +18,7 @@ public class Node {
         costSoFar = 0;
         estimatedCost = 0;
         heuristic = 0;
+        boundingRec = new Rectangle((x*50) + 10, (y*50) + 10, 15, 15 );
     }
 
     public boolean compare(Node node){
